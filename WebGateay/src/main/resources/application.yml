@@ -1,0 +1,28 @@
+logging:
+  level:
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+
+server:
+  port: 8680
+  shutdown: graceful
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+spring:
+  application:
+    name: WebGateway
+  lifecycle:
+    timeout-per-shutdown-phase: 15s  
+  cloud:
+    gateway:
+      routes:
+      - id: orders-route
+        uri: ${checkout_SERVICE_URL:http://checkout:8080}
+        predicates:
+        - Path=/orders/**
+        filters:
+        - RewritePath=/orders/?(?<segment>.*), /api/orders/$\{segment}
+      
+                
+     
+  
