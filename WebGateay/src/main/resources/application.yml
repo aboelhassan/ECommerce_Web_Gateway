@@ -1,3 +1,13 @@
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - gateway
+
 logging:
   level:
     org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
@@ -8,6 +18,16 @@ server:
   netty:
     connection-timeout: 2s
     idle-timeout: 15s
+
+eureka:
+   instance:
+     preferIpAddress: true
+   client:
+     registerWithEureka: true
+     fetchRegistry: true
+     serviceUrl:
+       defaultZone: http://eurekaserver:8580/eureka/ 
+
 spring:
   application:
     name: WebGateway
@@ -17,11 +37,15 @@ spring:
     gateway:
       routes:
       - id: orders-route
-        uri: ${checkout_SERVICE_URL:http://checkout:8080}
+        uri: lb://CHECKOUT #${checkout_SERVICE_URL:http://checkout:8080}
         predicates:
         - Path=/orders/**
         filters:
         - RewritePath=/orders/?(?<segment>.*), /api/orders/$\{segment}
+  security:
+    user:
+      name: admin
+      password: admin
       
                 
      
